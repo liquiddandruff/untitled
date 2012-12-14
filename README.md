@@ -7,5 +7,7 @@ function fancyAlert(arg) {
 	}
 }
 ```
+---
+- - -
 
-* asdfksldkfjl *
+* asdfksldkfjl
