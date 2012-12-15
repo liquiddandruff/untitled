@@ -115,8 +115,7 @@ function netManager:update(dt)
 	local count,packetList = self.buffer:updateAndPop(dt)
 	if packetList then
 		for i = 1, count do
-			local x,y,xpos,ypos,rotDeg,fired,health,peerid = packetList[i]:unpack()
-			
+			local x,y,xPos,yPos,rotDeg,fired,health,peerid = unpack(packetList[i])
 			if self.peers[peerid] then
 				local peer = self.peers[peerid].peer
 				
@@ -131,6 +130,11 @@ function netManager:update(dt)
 					if x ~= 0 and y ~= 0 then
 						x,y = x*0.65,y*0.65
 					end	
+					
+					if xPos ~= "0" then
+						xPos,yPos = tonumber(xPos),tonumber(yPos)
+						peer.pos.x,peer.pos.y = xPos,yPos
+					end
 
 					peer.xInput,peer.yInput = x,y	
 				end
@@ -247,12 +251,12 @@ function netManager:update(dt)
 			
 			local packet
 			
-			if self.tSincePacket.posUpdate > 30 then
-				print("yea")
+			if self.tSincePacket.posUpdate > 20 then
+				print("raw position sent")
 				packet	= 
 					string.format("%s %s %s %s %s %s %s %s", "ID_1", 
 					x	,	y,
-					round(player.pos.x,2)	,	round(player.pos.y,2),
+					round(player.pos.x,1)	,	round(player.pos.y,1),
 					round(player.rotDeg,4)	,	tostring(self.fired),
 					round(player.health,3))
 				self.tSincePacket.posUpdate = 0
@@ -269,11 +273,7 @@ function netManager:update(dt)
 			self.fired = 0
 			self.tSincePacket.pMov = 0
 		end		
-		
-	end
-	
-
-	
+	end	
 end
 
 function netManager:draw()

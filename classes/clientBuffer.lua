@@ -22,10 +22,15 @@ function cBuffer:push(packetBody)
 	local splitter
 	
 	for i = 1, count do 
+		--print("ONE",packetList[i]:match("^(%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*)"))
 		splitter 		= string.find(packetMerged,"|")
 
 		packetList[i] 	= sub(packetMerged,1,splitter-1)
-		packetList[i]	= {x,y,xpos,ypos,rotDeg,fired,health,peerid = packetList[i]:match("^(%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*)")}
+		
+		--local x,y,xpos,ypos,rotDeg,fired,health,peerid = packetList[i]:match("(%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*)$")
+		packetList[i]	= {packetList[i]:match("(%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*)$")}	
+		--print(packetList[i].x,packetList[i].y,packetList[i].xpos,packetList[i].ypos,packetList[i].rotDeg,packetList[i].fired,packetList[i].health,packetList[i].peerid)
+	
 		packetMerged 	= sub(packetMerged,splitter+1)
 	end
 	
@@ -34,10 +39,10 @@ end
 
 function cBuffer:updateAndPop(dt)
 	if self.bufferLen >= self.catchCount then
-		self.bufferLen 		= self.bufferLen - 1
+		self.bufferLen 	= self.bufferLen - 1
 		local prepared	= table.remove(self.buffer,1)
 
-		return prepared.count, prepared.packetList
+		return prepared[1], prepared[2]
 	end
 end
 

@@ -457,7 +457,6 @@ function state:draw()
 	
 	lg.setFont(font["small"])
 	cam:attach()
-	
 		area:draw()
 		
 		for i, v in ipairs(gorelist) do
@@ -474,8 +473,6 @@ function state:draw()
 		for _, zombie in ipairs(zombies) do
 			zombie:draw()
 		end
-
-
 		--[[if(zorder) then
 			table.sort(zorder,function(a,b) return a.pos.y<b.pos.y end)
 			for _, object in ipairs(zorder) do
@@ -491,41 +488,34 @@ function state:draw()
 			bullet:draw()
 		end		
 		
-
 		for i, v in ipairs(blood) do
 			lg.draw(v[1], 0, 0)
 		end
-
 	cam:detach()
 	
-	local c1,c2,c3 = lg.getColor()
 	lg.setColor(0,0,0)
-	
-	lgPrint("number of zombies: "	..#zombies				,10,0)
-	lgPrint("number of bullets: "	..#bullets 				,10,20)
-	lgPrint("hashed objects: "		..shash.hashed			,10,40)
-	lgPrint("level: "				..player.lvl			,10,380)
-	lgPrint("experience: "			..player.exp			,10,400)
-	lgPrint("delta time: "			..game.dt				,900,0) 
-	lgPrint("fps: "					..love.timer.getFPS()	,900,20)
-	
-	local str = nMngr.rcvRate ~= 0 and math.round(nMngr.rcvRate,3) or "Not Connected"
-	lgPrint("packets/second: "		..str,900,40)
-	
-	local str = nMngr.rcvSizeRate ~= 0 and tonumber(nMngr.rcvSizeRate) or "Not Connected"
-	lgPrint("bytes/second: "		..str,900,60)
-	
-	local str = nMngr.client.connected and client.ping.time or "Not Connected"
-	lgPrint("ping: "				..str,900,80)
-	
-	lg.setColor(c1,c2,c3)
+		lgPrint("number of zombies: "	..#zombies				,10,0)
+		lgPrint("number of bullets: "	..#bullets 				,10,20)
+		lgPrint("hashed objects: "		..shash.hashed			,10,40)
+		lgPrint("level: "				..player.lvl			,10,380)
+		lgPrint("experience: "			..player.exp			,10,400)
+		
+		local rightAlign	= screenW-240
+		
+		lgPrint("delta time: "			..game.dt				,rightAlign,0) 
+		lgPrint("fps: "					..love.timer.getFPS()	,rightAlign,20)
+		
+		local str 	= nMngr.rcvRate 	~= 0 and math.round(nMngr.rcvRate,3) or "Not Connected"
+		lgPrint("packets/second: "		..str,rightAlign,40)
+		
+		str 		= nMngr.rcvSizeRate ~= 0 and tonumber(nMngr.rcvSizeRate) or "Not Connected"
+		lgPrint("bytes/second: "		..str,rightAlign,60)
+		
+		str 		= nMngr.client.connected and client.ping.time or "Not Connected"
+		lgPrint("ping: "				..str,rightAlign,80)
+	lg.setColor(255,255,255)
 	
 	shash.hashed = 0	
-	--local vectest = vec(zombies[1].pos.x,zombies[1].pos.y)
-
-	--lg.print("tempvar: "..zombies[1].temp.x,10,90)	
-	--lg.print("tempvar: "..zombies[1].temp.y,10,120)	
-	--draw hud
 	
 	minimap:draw()
 	loveframes.draw()
@@ -536,11 +526,6 @@ function state:draw()
 	--for i = 1, 3 do
 		--lg.draw(health >= i and images.fullheart or images.emptyheart, 14*i, 14) --dick
 	--end
-	--lg.draw(images.comboicon, 14, 85)
-	--lg.setColor(50,50,50)
-	
-	--lg.print("Score: "..score, 14, 72)
-	--lg.print("x "..combo, 55, 108)
 end
 
 function state:mousepressed(x, y, button)
@@ -562,9 +547,6 @@ function state:mousepressed(x, y, button)
 	elseif button == "wd" then
 		cam.zoom = cam.zoom - 0.1
 	end]]
-	
-	
-	--client:send(player.pos.x)
 end
 
 function state:mousereleased(x, y, button)
@@ -573,19 +555,17 @@ function state:mousereleased(x, y, button)
 end
 
 local keymap = {
-  ["escape"] 	= 	function() Gamestate.switch(Gamestate.menu) end,
-  ["rctrl"] 	= 	function() debug.debug() end,
+	["escape"] 	= 	function() Gamestate.switch(Gamestate.menu) end,
+	["rctrl"] 	= 	function() debug.debug() end,
+	["]"] 		= 	function() gui:toggle("console") end,
   
-  ["kp1"] 		= 	function() dbgl.zombiefreeze = not dbgl.zombiefreeze end,
-  ["kp2"] 		= 	function() dbgl.bulletslow = not dbgl.bulletslow end,
+	["kp1"] 	= 	function() dbgl.zombiefreeze = not dbgl.zombiefreeze end,
+	["kp2"] 	= 	function() dbgl.bulletslow = not dbgl.bulletslow end,
 
   
-  ["p"] 		= 	function()	
+	["p"] 		= 	function()	
 						tween(3,player,{health = 10000},'linear') 
-					end,
-					
-  ["]"] 		= 	function() gui:toggle("console") end
-  --["]"] 		= 	function() if gameGui["cmd"].visible then gameGui["cmd"]:hide() else gameGui["cmd"]:show() end end
+					end
 }
 
 function state:keypressed(key, unicode)
@@ -595,10 +575,8 @@ function state:keypressed(key, unicode)
 	if keymap[key] then 
 		keymap[key]()
 	end
-	
-		--file:write("\nGame.DT: "..game.dt)
-		--file:flush()
-	
+	--file:write("\nGame.DT: "..game.dt)
+	--file:flush()
 end
 
 function state:keyreleased(key)

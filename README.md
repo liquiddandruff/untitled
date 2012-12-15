@@ -8,6 +8,5 @@ function fancyAlert(arg) {
 }
 ```
 ---
-- - -
 
 * asdfksldkfjl
