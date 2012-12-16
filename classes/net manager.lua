@@ -112,12 +112,23 @@ function netManager:update(dt)
 		self.rcvSizeRate = self.rcvSize
 		self.rcvSize = 0
 	end
+	
+	local peerCount, packetList = self.buffer:updateAndPop(dt)
+	for peerId, peerPacketList in pairs(packetList) do		-- not a list yet, just first packet
+		local x,y,xPos,yPos,rotDeg,fired,health = peerPacketList:match("^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+) (%S+)")
+		print(x,y,xPos,yPos,rotDeg,fired,health,peerId)
+	end
+	--[[
+	if peerCount > 0 then
+		for peerNum = 1, peerCount do
+			local x,y,xPos,yPos,rotDeg,fired,health,peerId = 
+	]]
+	
+	--[[
 	local count1,packetList1,count2,packetList2,count3,packetList3 = self.buffer:updateAndPop(dt)
 	if packetList1 then
-		local peerList2 = {}
-		for k = 1, count3 do
-			peerList2[packetList3[k][8]] = {packetList3[k]}
-		end
+
+		
 		for i = 1, count1 do
 			local x1,y1,xPos1,yPos1,rotDeg1,fired1,health1,peerid1 = unpack(packetList1[i])			
 			--local x2,y2,xPos2,yPos2,rotDeg2,fired2,health2,peerid2 = unpack(packetList2[i])
@@ -152,14 +163,12 @@ function netManager:update(dt)
 					end
 				end
 			else
-				--[[
-				self:createPeer(peerid1)
-				print(peerid1.." has joined")
-				]]
+
 			end
 			
 		end
-	end
+	end]]
+	
 	--[[
 	local count,packetList1 = self.buffer:updateAndPop(dt)
 	if packetList1 then
