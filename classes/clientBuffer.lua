@@ -51,7 +51,8 @@ function cBuffer:updateAndPop(dt)
 	for peerId, peerPacketList in pairs(self.buffer) do
 		if #peerPacketList >= self.catchCount then
 			peerCount = peerCount + 1
-			packetList[peerId] = table.remove(self.buffer[peerId],1)		-- table.remove(peerPacketList,1)
+			-- since first entry is removed, list[2] becomes list[3]
+			packetList[peerId] = {table.remove(self.buffer[peerId],1),peerPacketList[1],peerPacketList[2]}		-- table.remove(peerPacketList,1)
 		end
 	end
 	
@@ -67,33 +68,3 @@ function cBuffer:updateAndPop(dt)
 		return tick1[1], tick1[2], tick2[1], tick2[2], tick3[1], tick3[2]
 	end]]
 end
-
---[[
-function cBuffer:push(packetBody)
-	self.bufferLen = self.bufferLen + 1
-	
-	self.buffer[self.bufferLen] = {packet = packetBody,cTime = getTime()}
-end
-
-function cBuffer:updateAndPop(dt)
-	if self.bufferLen >= self.catchCount then
-		self.bufferLen 		= self.bufferLen - 1
-		local packetMerged	= table.remove(self.buffer,1).packet
-		local packetList 	= {}
-		
-		local _, count 	= string.gsub(packetMerged, "|", "|")	
-		local sub 			= string.sub
-		local splitter
-		
-		for i = 1, count do 
-			splitter 		= string.find(packetMerged,"|")
-
-			packetList[i] 	= sub(packetMerged,1,splitter-1)
-			packetMerged 	= sub(packetMerged,splitter+1)
-		end
-		
-		return count, packetList
-	end
-end
-
-]]

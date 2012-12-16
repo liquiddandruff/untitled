@@ -97,6 +97,21 @@ function netManager:dropPeer(peerid)
 	self.peers[peerid] = nil
 end
 
+function netManager:tweener(peer, toTweento)
+	if self.tid then
+		if self.tid._expired then
+			self.tid = nil
+		end
+		return
+	else
+		--only tweens r. pi and -pi messes up tweener
+		--print("Peer.r: "..peer.r, "Recieve: "..toTweento)
+		if peer.r ~= toTweento  then
+			self.tid = tween(1/self.rcvRate,peer,{r = toTweento},'linear')
+		end
+	end
+end
+
 function netManager:update(dt)
 	if not game.didhandshake then return false end
 	
@@ -114,9 +129,34 @@ function netManager:update(dt)
 	end
 	
 	local peerCount, packetList = self.buffer:updateAndPop(dt)
-	for peerId, peerPacketList in pairs(packetList) do		-- not a list yet, just first packet
-		local x,y,xPos,yPos,rotDeg,fired,health = peerPacketList:match("^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+) (%S+)")
-		print(x,y,xPos,yPos,rotDeg,fired,health,peerId)
+	for peerId, peerPacketList in pairs(packetList) do		-- not a list yet, just first packet		
+		if self.peers[peerId] then
+			local peer = self.peers[peerId].peer
+			
+			local x,y,xPos,yPos,rotDeg,fired,health = peerPacketList[1]:match("^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+) (%S+)")
+			local x2,y2,xPos2,yPos2,rotDeg2,fired2,health2 = peerPacketList[2]:match("^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+) (%S+)")
+			
+			local tonumber	= tonumber
+			peer.health			= tonumber(health)
+			
+			self:tweener(peer, tonumber(rotDeg2))
+			
+			peer.fired			= tonumber(fired) --== "1" and true or false	
+			peer.r 				= tonumber(rotDeg)
+			
+			x,y					= tonumber(x),tonumber(y)
+
+			if x ~= 0 and y ~= 0 then
+				x,y = x*0.65,y*0.65
+			end	
+			
+			if xPos ~= "0" then
+				xPos,yPos = tonumber(xPos),tonumber(yPos)
+				peer.pos.x,peer.pos.y = xPos,yPos
+			end
+
+			peer.xInput,peer.yInput = x,y		
+		end
 	end
 	--[[
 	if peerCount > 0 then

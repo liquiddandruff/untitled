@@ -219,9 +219,14 @@ function player:Update(dt)
 
 	if self.alive then 
 		--self.r	= math.getanglevec(camera:screen(self.pos),vec(love.mouse.getX(),love.mouse.getY()))
+		--print("mousepos",camera:mousepos())
+		--print("self.pos",self.pos)
 		self.r 		= (camera:mousepos() - self.pos):angle2()
+		--print("self.r",self.r)
 		self.rotRad	= (camera:mousepos() - self.pos):normalized()
+		--print("self.rotRad",self.rotRad)
 		self.rotDeg	= self.rotRad:angle2()
+		--print("self.rotDeg",self.rotDeg)
 	end
 	
 	--self.armfront_angle		= math.getangle(cam:screen(self.pos).x,love.mouse.getX(),cam:screen(self.pos).y,love.mouse.getY())

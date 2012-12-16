@@ -78,7 +78,8 @@ local function newTween(time, subject, target, easing, callback, args)
     callback = callback,
     args = args,
     initial = copyTables({}, target, subject),
-    running = 0
+    running = 0,
+	_expired = false
   }
   tweens[self] = self
   return self
@@ -128,6 +129,8 @@ local pow, sin, cos, pi, sqrt, abs, asin = math.pow, math.sin, math.cos, math.pi
 
 -- linear
 local function linear(t, b, c, d) return c * t / d + b end
+
+--local function linearPi(t, b, c, d) return (c
 
 -- quad
 local function inQuad(t, b, c, d) return c * pow(t / d, 2) + b end
@@ -364,7 +367,10 @@ function tween.update(dt)
   local expired = {}
   for _,t in pairs(tweens) do
     updateTween(t, dt)
-    if hasExpiredTween(t) then table.insert(expired, t) end
+    if hasExpiredTween(t) then 
+		t._expired =true
+		table.insert(expired, t) 
+	end
   end
   for i=1, #expired do finishTween(expired[i]) end
 end
