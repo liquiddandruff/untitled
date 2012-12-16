@@ -40,9 +40,12 @@ end
 function cBuffer:updateAndPop(dt)
 	if self.bufferLen >= self.catchCount then
 		self.bufferLen 	= self.bufferLen - 1
-		local prepared	= table.remove(self.buffer,1)
+		print("BufferLEN: ",self.bufferLen)
+		local tick1	= table.remove(self.buffer,1)
+		local tick2	= self.buffer[1]
+		local tick3	= self.buffer[2]
 
-		return prepared[1], prepared[2]
+		return tick1[1], tick1[2], tick2[1], tick2[2], tick3[1], tick3[2]
 	end
 end
 
