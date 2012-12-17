@@ -33,7 +33,7 @@ local zorder
 --time critical
 local insert, remove = table.insert,table.remove
 
-function createblood(pos, amount, speedMin, speedMax, dir, actor)	--todo: move all parameters as member variables in actor
+function createblood(pos, amount, speedMin, speedMax, radian, actor)	--todo: move all parameters as member variables in actor
 	local p = lg.newParticleSystem(images.bloodparticle,amount)
 	p:setSizes(0.8, 1, 1.3)
 	p:setParticleLife(0.3)
@@ -44,21 +44,18 @@ function createblood(pos, amount, speedMin, speedMax, dir, actor)	--todo: move a
 	p:setColors(207, 31, 31, 255, 255, 0, 0, 0)
 	p:setRadialAcceleration(1,100)
 	
-	if dir == 0 then 										-- 0 means fatal
+	if radian == nil then 										-- 0 means fatal
 		p:setEmissionRate(amount*amount)
 		p:setSpeed(10, speedMax)
 		p:setSpread(2*math.pi)
-	elseif dir and dir.x then
+	else
 		--print("hit")
 		p:setEmissionRate(amount+randomClamped()*100)
 		--p:setSpread(math.pi/math.random(1,3))
 		p:setSpread(math.pi/math.random(2,5))
 		--p:setSpread(0)
-		local angle = math.atan2(dir.y,dir.x)
-		--print(math.deg(angle))
-		p:setDirection(angle)
-	else
-		p:setSpread(math.random(1,3)*math.pi)
+		print("RADIAN: ",radian)
+		p:setDirection(radian)
 	end
 	p:start()
 	
@@ -215,7 +212,7 @@ function state:update(dt)
 	if player.fired then
 		--local dir = vec(math.cos(player.r),math.sin(player.r))
 
-		local bullet = bullet:new(player.pos+player.rotRad*player.radius*0.5,player.rotRad,player.rotDeg,client.id)--todo: change to gun:shoot
+		local bullet = bullet:new(player.pos+player.dir*player.radius*0.5,player.dir,player.r,client.id)--todo: change to gun:shoot
 		insert(bullets, bullet)
 		--player.fired=false
 	end	
@@ -267,7 +264,7 @@ function state:update(dt)
 					local exitpos 	= entrypos + obj.dir * length
 
 					
-					player:damaged(obj.damage,-obj.dir,entrypos)		--straight through, entry
+					player:damaged(obj.damage,obj.r,entrypos)		--straight through, entry
 					--player:damaged(obj.damage,obj.dir,exitpos)		--straight through, exit
 					--player:damaged(obj.damage,entryangle,entrypos)	--angle to the bullet from zombie.pos
 

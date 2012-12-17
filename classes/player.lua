@@ -57,13 +57,13 @@ function player:init(x, y, a, z, name, cam)		--radius and box moved to actor
 	
 	if not self.damagedEffect then
 		print("Func player.damagedEffect loaded")
-		self.damagedEffect = function(damage,dir,pos)
+		self.damagedEffect = function(damage,rotation,pos)
 			self.health = math.max(self.health-damage,0)
-		  --createblood(pos, amount, speedMin, speedMax, dir)
+		  --createblood(pos, amount, speedMin, speedMax, rotation)
 			if self.health == 0 then
-				createblood(self.pos, 600, 100, 500, 0)
+				createblood(self.pos, 600, 100, 500, nil)
 			else
-				createblood(pos, 100*damage, 50, 300+2*damage, dir,self)
+				createblood(pos, 100*damage, 50, 300+2*damage, rotation,self)
 			end
 		end
 	end
@@ -157,7 +157,7 @@ function player:hashedUpdate()
 
 				if not self.invuln then
 					self.invuln = 1
-					self:damaged(math.random(1,100),-entryangle,exitpos)
+					self:damaged(math.random(1,100),entryangle:angle2(),exitpos)
 					self.force = self.force + (2*entryangle)
 				end
 
@@ -188,7 +188,7 @@ function player:hashedUpdate()
 					local exitpos 	= entrypos + obj.dir * length
 
 					
-					self:damaged(obj.damage,-obj.dir,entrypos)		--straight through, entry
+					self:damaged(obj.damage,obj.r,entrypos)		--straight through, entry
 					--self:damaged(obj.damage,obj.dir,exitpos)		--straight through, exit
 					--self:damaged(obj.damage,entryangle,entrypos)	--angle to the bullet from zombie.pos
 
@@ -218,15 +218,9 @@ function player:Update(dt)
 	spinAnim:update(dt)
 
 	if self.alive then 
-		--self.r	= math.getanglevec(camera:screen(self.pos),vec(love.mouse.getX(),love.mouse.getY()))
-		--print("mousepos",camera:mousepos())
-		--print("self.pos",self.pos)
-		self.r 		= (camera:mousepos() - self.pos):angle2()
-		--print("self.r",self.r)
-		self.rotRad	= (camera:mousepos() - self.pos):normalized()
-		--print("self.rotRad",self.rotRad)
-		self.rotDeg	= self.rotRad:angle2()
-		--print("self.rotDeg",self.rotDeg)
+		-- 90 degrees = -pi/2 since top to bottom is -y to +y; y signs flipped
+		self.dir	= (camera:mousepos() - self.pos):normalized()
+		self.r		= self.dir:angle2()
 	end
 	
 	--self.armfront_angle		= math.getangle(cam:screen(self.pos).x,love.mouse.getX(),cam:screen(self.pos).y,love.mouse.getY())
@@ -371,7 +365,7 @@ function player:draw()
 		if self.invuln then lg.setColor(255, 255, 255, 255-(150*self.invuln)) end
 		--print(self.r)
 		--currAnim:draw(math.round(self.pos.x),math.round(self.pos.y),self.r,1,1,25,25)	--self.facing
-		currAnim:draw(self.pos.x,self.pos.y,self.rotDeg,1,1,25,25)	--self.facing
+		currAnim:draw(self.pos.x,self.pos.y,self.r,1,1,25,25)	--self.facing
 		
 		--[[
 		if self.facing == 1 then		-- facing right			1.5707 or pi/2 = horizontal

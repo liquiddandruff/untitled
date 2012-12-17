@@ -23,8 +23,8 @@ function peerPlayer:init(x, y, a, z, id)
 	self.health			= 200
 	
 	self.pos 			= vec(x,y)	
-	self.rotRad			= vec(0,0)
-	self.rotDeg			= 0		
+	self.dir			= vec(0,0)
+	self.r				= 0		
 	self.maxspeed 		= 360			--300  	350	/dt(100) 	= 35 pixels per 
 	self.maxforce		= 24			--60	/dt(100) 	= 0.6 pixels max acceleration
 
@@ -39,15 +39,14 @@ function peerPlayer:init(x, y, a, z, id)
 	
 	if not self.damagedEffect then
 		print("Func peer.damagedEffect loaded")
-		self.damagedEffect = function(damage,dir,pos)
+		self.damagedEffect = function(damage,rotation,pos)
 			self.health = math.max(self.health-damage,0)
-		  --createblood(pos, amount, speedMin, speedMax, dir)
+		  --createblood(pos, amount, speedMin, speedMax, rotation)
 			if self.health == 0 then
-				createblood(self.pos, 600, 100, 500, 0)
+				createblood(self.pos, 600, 100, 500, nil)
 			else
-				createblood(pos, 100*damage, 50, 300+2*damage, dir,self)
+				createblood(pos, 100*damage, 50, 300+2*damage, rotation,self)
 			end
-			
 		end
 	end
 	

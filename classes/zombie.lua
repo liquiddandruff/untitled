@@ -25,10 +25,7 @@ function zombie:init(x, y, a, p, z)
 	self.range 		= 60
 	self.a			= {} 					--a = action, action list
 
-
-	self.dir 		= math.random() * math.pi
-	self.dirX 		= math.cos(self.dir)
-	self.dirY 		= math.sin(self.dir)
+	
 	self.dur 		= math.random(1,3)
 
 	self.caught 	= false
@@ -46,11 +43,11 @@ function zombie:init(x, y, a, p, z)
 	
 	if not self.damagedEffect then
 		print("Func zombie.damagedEffect loaded")
-		self.damagedEffect = function(damage,dir,pos)
+		self.damagedEffect = function(damage,rotation,pos)
 			self.health = math.max(self.health-damage,0)
-		  --createblood(pos, amount, speedMin, speedMax, dir)
+		  --createblood(pos, amount, speedMin, speedMax, rotation)
 			if self.health > 0 then 
-				createblood(pos, 50*damage, 100, 300+10*damage, dir,self)
+				createblood(pos, 50*damage, 100, 300+10*damage, rotation,self)
 			end
 		end
 	end
@@ -110,7 +107,7 @@ function zombie:Update(dt)
 						local exitpos 	= entrypos + obj.dir * length
 
 						
-						self:damaged(obj.damage,-obj.dir,entrypos)		--straight through, entry
+						self:damaged(obj.damage, obj.r, entrypos)		--straight through, entry
 						--self:damaged(obj.damage,obj.dir,exitpos)		--straight through, exit
 						--self:damaged(obj.damage,entryangle,entrypos)	--angle to the bullet from zombie.pos
 
@@ -211,25 +208,13 @@ function zombie:Update(dt)
 		
 		shash:hash(self)
 	else
-		createblood(self.pos, 600, 100, 500, 0)
+		createblood(self.pos, 600, 100, 500)
 		player:gainexp(10)
 	end
 	--self.facing = (self.dirX < 0) and -1 or 1  -- dirX = -1 to 1 	assignement :: -1 = left   1 = right
 	
-
-	--constrain to area
-	--[[
-	self.pos.x = math.max(self.pos.x, self.area:left()+38)
-	self.pos.x = math.min(self.pos.x, self.area:right()-38)
-	self.pos.y = math.max(self.pos.y, self.area:top()+70)
-	self.pos.y = math.min(self.pos.y, self.area:bottom()-70)	]]
-	--self.pos.x = clamp(self.pos.x,	self.area:left()+38,	self.area:right()-38)	
-	--self.pos.y = clamp(self.pos.y, self.area:top()+70,	self.area:bottom()-70)	
-	--self.pos.x = clamp(self.pos.x,	self.leftbound,	self.rightbound)						-- 1.7 microseconds
-	--self.pos.y = clamp(self.pos.y, self.topbound,	self.botbound)
-	
-	local newpos = self.pos										--localing self.pos trims off .1 microsecond
-	if newpos.x < self.leftbound then								--0.7 micro seconds
+	local newpos = self.pos										
+	if newpos.x < self.leftbound then
 		newpos.x = self.leftbound
 	elseif newpos.x > self.rightbound then
 		newpos.x = self.rightbound

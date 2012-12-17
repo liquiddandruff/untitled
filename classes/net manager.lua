@@ -133,16 +133,17 @@ function netManager:update(dt)
 		if self.peers[peerId] then
 			local peer = self.peers[peerId].peer
 			
-			local x,y,xPos,yPos,rotDeg,fired,health = peerPacketList[1]:match("^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+) (%S+)")
-			local x2,y2,xPos2,yPos2,rotDeg2,fired2,health2 = peerPacketList[2]:match("^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+) (%S+)")
+			local x,y,xPos,yPos,r,fired,health = peerPacketList[1]:match("^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+) (%S+)")
+			local x2,y2,xPos2,yPos2,r2,fired2,health2 = peerPacketList[2]:match("^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+) (%S+)")
+			local x3,y3,xPos3,yPos3,r3,fired3,health3 = peerPacketList[3]:match("^(%S+) (%S+) (%S+) (%S+) (%S+) (%S+) (%S+)")
 			
 			local tonumber	= tonumber
 			peer.health			= tonumber(health)
 			
-			self:tweener(peer, tonumber(rotDeg2))
+			--self:tweener(peer, tonumber(r2))
 			
 			peer.fired			= tonumber(fired) --== "1" and true or false	
-			peer.r 				= tonumber(rotDeg)
+			peer.r 				= tonumber(r)
 			
 			x,y					= tonumber(x),tonumber(y)
 
@@ -151,8 +152,9 @@ function netManager:update(dt)
 			end	
 			
 			if xPos ~= "0" then
-				xPos,yPos = tonumber(xPos),tonumber(yPos)
-				peer.pos.x,peer.pos.y = xPos,yPos
+				local realPos = vec(tonumber(xPos),tonumber(yPos))
+				--local offset = realPos - peer.pos
+				peer.pos = realPos
 			end
 
 			peer.xInput,peer.yInput = x,y		
@@ -266,7 +268,7 @@ function netManager:update(dt)
 						local exitpos 	= entrypos + obj.dir * length
 
 						
-						peer:damaged(obj.damage,-obj.dir,entrypos)		--straight through, entry
+						peer:damaged(obj.damage,obj.r,entrypos)		--straight through, entry
 						--self:damaged(obj.damage,obj.dir,exitpos)		--straight through, exit
 						--self:damaged(obj.damage,entryangle,entrypos)	--angle to the bullet from zombie.pos
 
@@ -319,7 +321,7 @@ function netManager:update(dt)
 					string.format("%s %s %s %s %s %s %s %s", "ID_1", 
 					x	,	y,
 					round(player.pos.x,1)	,	round(player.pos.y,1),
-					round(player.rotDeg,4)	,	tostring(self.fired),
+					round(player.r,4)	,	tostring(self.fired),
 					round(player.health,3))
 				self.tSincePacket.posUpdate = 0
 			else
@@ -327,7 +329,7 @@ function netManager:update(dt)
 					string.format("%s %s %s %s %s %s %s %s", "ID_1", 
 					x	,	y,
 					0	,	0,
-					round(player.rotDeg,4)	,	tostring(self.fired),
+					round(player.r,4)	,	tostring(self.fired),
 					round(player.health,3))
 			end
 				

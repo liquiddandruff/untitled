@@ -34,15 +34,9 @@ function cBuffer:push(packetBody)
 		else
 			self.buffer[peerId] = {peerPacket}
 		end
-		
-		--local x,y,xpos,ypos,rotDeg,fired,health,peerid = packetList[i]:match("(%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*)$")
-		--packetList[i]	= {packetList[i]:match("(%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*)$")}	
-		--print(packetList[i].x,packetList[i].y,packetList[i].xpos,packetList[i].ypos,packetList[i].rotDeg,packetList[i].fired,packetList[i].health,packetList[i].peerid)
 	
 		packetMerged 	= sub(packetMerged,splitter+1)
 	end
-	
-	--self.buffer[self.bufferLen] = {count, packetList}
 end
 
 function cBuffer:updateAndPop(dt)
@@ -52,19 +46,9 @@ function cBuffer:updateAndPop(dt)
 		if #peerPacketList >= self.catchCount then
 			peerCount = peerCount + 1
 			-- since first entry is removed, list[2] becomes list[3]
-			packetList[peerId] = {table.remove(self.buffer[peerId],1),peerPacketList[1],peerPacketList[2]}		-- table.remove(peerPacketList,1)
+			packetList[peerId] = {table.remove(self.buffer[peerId],1),peerPacketList[1],peerPacketList[2]}
 		end
 	end
 	
 	return peerCount, packetList
---[[
-	if self.bufferLen >= self.catchCount then
-		self.bufferLen 	= self.bufferLen - 1
-		print("BufferLEN: ",self.bufferLen)
-		local tick1	= table.remove(self.buffer,1)
-		local tick2	= self.buffer[1]
-		local tick3	= self.buffer[2]
-
-		return tick1[1], tick1[2], tick2[1], tick2[2], tick3[1], tick3[2]
-	end]]
 end

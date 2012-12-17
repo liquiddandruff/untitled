@@ -94,7 +94,7 @@ function actor:init()
 	self.name 			= "actor"
 	self.alive			= true	
 	
-	--rotation
+	--rotation in radians
 	self.r 				= 0	
 	self.radius			= 49					-- diameter actually	
 	self.box			= {w = 60, h = 60}
@@ -312,17 +312,17 @@ function actor:wanderdraw()
 	end
 end
 
-function actor:damaged(damage,dir,pos)
+function actor:damaged(damage, rotation, pos)
 	if self.damagedEffect then
-		self.damagedEffect(damage,dir,pos)
+		self.damagedEffect(damage, rotation, pos)
 		return
 	end
 	if not dbgl.zombiefreeze then 
 		self.health = math.max(self.health-damage,0)
 	end
 	if pos then 
-		createblood(pos, 200, 50, 300,dir)
+		createblood(pos, 200, 50, 300,rotation)
 	else
-		createblood(self.pos, 200, 50, 300,dir)
+		createblood(self.pos, 200, 50, 300,rotation)
 	end
 end

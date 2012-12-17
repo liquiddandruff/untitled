@@ -11,27 +11,18 @@ function projectiles:info(image,speed,type,damage,a)
 	area 			=	a
 end
 
-function projectiles:init(startpos,startdir,angle,id)
-	self.box		=	{w = 20,h = 20}	
-	-- can increase boundnig box to get detected earlier
-	--self.box.w 		= 20	--16
-	--self.box.h 		= 20
-
-	self.pos 		=	startpos
-	
-	if startdir == 0 then
-		self.dir 	=	vec(math.cos(angle),math.sin(angle)):normalized()
-	else
-		self.dir	=	startdir--:normalized()--+math.pi/2
-	end
-	--self.dirX 	= 	math.cos(self.dir)
-	--self.dirY 	= 	math.sin(self.dir)
-	self.angle		=	angle
-	
+function projectiles:init(startPos, startDir, radians, id)
 	self.owner 		= id
+	self.active 	= true
+
+	self.pos 		= startPos
+	self.dir 		= vec(math.cos(radians),math.sin(radians))
+	self.r			= radians
 	
-	
-	self.active 	=	true
+	self.box		= {w = 20,h = 20}
+	-- increased bounding box for earlier detection
+	--self.box.w 		= 20	--16
+	--self.box.h 		= 20	
 end
 
 function projectiles:update(dt)
@@ -55,15 +46,10 @@ function projectiles:update(dt)
 end
 
 function projectiles:draw()
-	lg.circle("line",self.pos.x,self.pos.y,self.box.w/2,10)
-	lg.draw(self.image,self.pos.x,self.pos.y,self.angle,1,1,8,8)--,self.dir+math.pi/2
+	lg.circle("line",self.pos.x,self.pos.y,self.box.w*0.5,10)
+	lg.draw(self.image,self.pos.x,self.pos.y,self.r,1,1,8,8)--,self.dir+math.pi/2
 	--lg.print("x: "..self.pos.x,self.pos.x,self.pos.y-28)
 	--lg.print("y: "..self.pos.y,self.pos.x,self.pos.y-14)
 	--lg.print("i am in buckets: "..shash:inbuckets(self),self.pos.x,self.pos.y)
 	--lg.rectangle("line",self.x-8,self.y-8,16,16)
 end
-
---[[
-function projectiles:gethitbox()
-	return { x = self.x-8, y = self.y-8, w = 16, h = 16, r = math.tan(self.dir.y/self.dir.x), ox = 8, oy = 8 } --angle self.dir+math.pi/2 unnesscary
-end]]
