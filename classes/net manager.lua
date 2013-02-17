@@ -152,9 +152,9 @@ function netManager:update(dt)
 			end	
 			
 			if xPos ~= "0" then
-				local realPos = vec(tonumber(xPos),tonumber(yPos))
-				--local offset = realPos - peer.pos
-				peer.pos = realPos
+				local realPos 	= vec(tonumber(xPos),tonumber(yPos))
+				local offset 	= realPos - peer.pos
+				peer.force = peer.force + offset:normalized()*offset:len()
 			end
 
 			peer.xInput,peer.yInput = x,y		

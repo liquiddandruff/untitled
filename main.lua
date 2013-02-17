@@ -114,7 +114,7 @@ function love.load()
 				tiny			= lg.newFont(10),
 				small 			= lg.newFont(15),
 				large 			= lg.newFont(32),
-				huge 			= lg.newFont(72)		}
+				huge 			= lg.newFont(72)	}
 
 	ui 				= {}
 	loadfromdir(ui				, "resources/ui"			, "png", lg.newImage)
