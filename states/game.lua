@@ -16,8 +16,6 @@ local blood
 
 local gui
 local statepaused
---game.bullets
-
 
 local minimap
 local timer
@@ -33,7 +31,8 @@ local zorder
 --time critical
 local insert, remove = table.insert,table.remove
 
-function createblood(pos, amount, speedMin, speedMax, radian, actor)	--todo: move all parameters as member variables in actor
+--todo: move all parameters as member variables in actor
+function createblood(pos, amount, speedMin, speedMax, radian, actor)
 	local p = lg.newParticleSystem(images.bloodparticle,amount)
 	p:setSizes(0.8, 1, 1.3)
 	p:setParticleLife(0.3)
@@ -44,16 +43,14 @@ function createblood(pos, amount, speedMin, speedMax, radian, actor)	--todo: mov
 	p:setColors(207, 31, 31, 255, 255, 0, 0, 0)
 	p:setRadialAcceleration(1,100)
 	
-	if radian == nil then 										-- 0 means fatal
+	-- 0 means fatal
+	if radian == nil then 										
 		p:setEmissionRate(amount*amount)
 		p:setSpeed(10, speedMax)
 		p:setSpread(2*math.pi)
 	else
-		--print("hit")
 		p:setEmissionRate(amount+randomClamped()*100)
-		--p:setSpread(math.pi/math.random(1,3))
 		p:setSpread(math.pi/math.random(2,5))
-		--p:setSpread(0)
 		print("RADIAN: ",radian)
 		p:setDirection(radian)
 	end
@@ -68,7 +65,7 @@ function createblood(pos, amount, speedMin, speedMax, radian, actor)	--todo: mov
 	insert(blood, dataset)
 end
 
-function state:enter(last,playername)
+function state:enter(last, playerName)
 	dbgl.zombiefreeze 	= false
 	dbgl.bulletslow		= false
 	
@@ -76,7 +73,6 @@ function state:enter(last,playername)
 		cam = camera()
 	end
 	
-	--love.event.clear()
 	bullets 			= {}
 	zombies 			= {}
 	spawnlist 			= {}
@@ -88,14 +84,13 @@ function state:enter(last,playername)
 	combo 				= 0
 	combotimer 			= 0
 
-	--lg.setBackgroundColor(108,84,30)
 	lg.setBackgroundColor(unpack(color["menubackground"]))
 	
-	area 		= _G.area		:new(0,0,1408,1408)--0,0,1408,1408
-	player 		= _G.player		:new(400, 300, area, zombies ,playername, cam)	
+	area 		= _G.area		:new(0,0,1408,1408)
+	player 		= _G.player		:new(400, 300, area, zombies , playerName, cam)	
 	minimap 	= _G.minimap	:new(player, area, zombies, spawnlist)	
 
-	bullet						:info(images.player.icon,15,"bullet",25,area)--2000
+	bullet						:info(images.player.icon,15,"bullet",25,area)
 	nMngr						:ready(player,area,bullets)
 	
 	player.invuln = false
@@ -142,21 +137,7 @@ function state:enter(last,playername)
 		end
 	end
 	
-
-
-	loveframes.config["DEBUG"] = showDebug--not loveframes.config["DEBUG"]
-
---[[
-	local frame1 = loveframes.Create("frame")
-	frame1:SetName("Text Input")
-	frame1:SetSize(500, 60)
-	frame1:Center()
-	]]
-	-- load the examples menu
-	--loveframes.debug.ExamplesMenu()
-	
-	-- load the sin selector menu
-	--loveframes.debug.SkinSelector()	
+	loveframes.config["DEBUG"] = showDebug
 end
 
 function state:leave()
@@ -165,7 +146,6 @@ end
 
 function state:update(dt)
 	if dt > 0.05 then dt = 0.05 else dt = dt end
-	--dt = math.min(dt,0.05)
 	game.dt  = dt
 	
 	loveframes.update(dt)
@@ -176,19 +156,6 @@ function state:update(dt)
 	zorder		= {}
 	
 	
-	--[[
-	if timer > 4 then
-		local gate = math.random(1, 4)
-		local x, y = area:center()
-		if 		gate ==	1 then y = area:top()
-		elseif gate == 2 then x = area:left()
-		elseif gate == 3 then x = area:right()
-		elseif gate == 4 then y = area:bottom()
-		end
-		table.insert(spawnlist, {zombie = zombie:new(x, y, area, player, zombies), gate = gate})
-		area:opengate(gate)
-		timer = 0
-	end]]
 	local i = 1
 	while spawnlist[i] do
 		local v = spawnlist[i]
@@ -229,7 +196,7 @@ function state:update(dt)
 	if player.fired then
 		--local bullet = bullet:new(player.pos,cam:mousepos()-player.pos,player.r,client.id)--move to player player.armfront_angle)
 		--insert(bullets, bullet)
-		player.fired=false
+		player.fired = false
 	end
 
 	for i, v in ipairs(bulletremovelist) do
@@ -331,7 +298,8 @@ function state:update(dt)
 	--blood
 	local bloodremovelist = {}
 	for i, v in ipairs(blood) do
-		if v[2] then		--v[1] , v[2] = particle , actor
+		--v[1] , v[2] = particle , actor
+		if v[2] then
 			if v[2].entrypos then
 				v[1]:setPosition(v[2].entrypos.x, v[2].entrypos.y)
 			else
@@ -358,83 +326,7 @@ function state:update(dt)
 	end
 	
 	player:hashedUpdate()
-	
-	--[[
-	for i, v in ipairs(zombies) do --move alive check to each zombie to avoid reloop; do collision checks with player bucket only
-		if not v.caught and quadsColliding(rotatebox(v:getbodybox()), rotatebox(player:getbodybox())) and not player.invuln then
-			--OH GOD WE COLLIDE!
-			--soundmanager:play(sounds.ow)
-			player:damaged(math.random(1,100),player.pos-v.pos,player.pos)
-			createblood(player.pos, 75, 50, 120)
-			if player.gripping then
-				zombies[player.gripped].caught = false
-				player.gripping = false
-				combo = 0
-			end
-			--v.dur = 3
-			--v.dir = v.dir+math.pi
-			--v.dirX = math.cos(v.dir)
-			--v.dirY = math.sin(v.dir)
-			--v.r = v.r+math.pi
-			player.invuln = 1
-			
-		elseif not v.caught and caughtzombie and caughtzombie ~= v and (quadsColliding(rotatebox(caughtzombie:getheadbox()), rotatebox(v:getheadbox())) or quadsColliding(rotatebox(caughtzombie:getheadbox()), rotatebox(v:getbodybox()))) then
-			combo = combo + 1
-			combotimer = 0
-			score = score + 100*combo
-			soundmanager:play(sounds.splat)
-			insert(zombieremovelist, i)
-			insert(gorelist, {zombie = v, timer = 0, alpha = 255, combo = combo})
-			createblood(v.pos, 100, 150, 300)
-			v.dustParticles:stop()
-		end
-	
 
-	end]]
-	--collisions
-	
-	--[[
-	for i, v in ipairs(zombies) do --check if ran
-		if not v.caught and quadsColliding(rotatebox(v:getbodybox()), rotatebox(player:getbodybox())) and not player.invuln then
-		--OH GOD WE COLLIDE!
-		--soundmanager:play(sounds.ow)
-			player:damaged(math.random(1,100),player.pos-v.pos,player.pos)
-			if player.gripping then
-				zombies[player.gripped].caught = false
-				player.gripping = false
-				combo = 0
-			end
-			v.dur = 3
-			v.dir = v.dir+math.pi
-			v.dirX = math.cos(v.dir)
-			v.dirY = math.sin(v.dir)
-			v.r = v.r+math.pi
-			player.invuln = 1
-			createblood(player.pos, 75, 50, 120)
-		elseif not v.caught and caughtzombie and caughtzombie ~= v and (quadsColliding(rotatebox(caughtzombie:getheadbox()), rotatebox(v:getheadbox())) or quadsColliding(rotatebox(caughtzombie:getheadbox()), rotatebox(v:getbodybox()))) then
-			combo = combo + 1
-			combotimer = 0
-			score = score + 100*combo
-			soundmanager:play(sounds.splat)
-			insert(removelist, i)
-			insert(gorelist, {zombie = v, timer = 0, alpha = 255, combo = combo})
-			createblood(v.pos, 100, 150, 300)
-			v.dustParticles:stop()
-		end
-	
-		if not v.alive then
-			insert(removelist, i)
-		end
-	end]]
-	
---[[
-	for i, v in ipairs(zombieremovelist) do
-		remove(zombies, v-i+1)
-		if player.gripping and (v-i+1) < player.gripped then
-			player.gripped = player.gripped - 1
-		end
-	end
-	]]
 	if not player.alive then
 		statepaused:update(dt)
 		--Gamestate.switch(Gamestate.lost, score)
@@ -481,7 +373,7 @@ function state:draw()
 			object:draw()
 		if player.invuln then lg.setColor(255, 255, 255, 255) end		]]
 		
-		for _, bullet in pairs(bullets) do		--ipairs
+		for _, bullet in pairs(bullets) do
 			bullet:draw()
 		end		
 		
@@ -520,9 +412,6 @@ function state:draw()
 	if not player.alive then
 		statepaused:draw()	
 	end
-	--for i = 1, 3 do
-		--lg.draw(health >= i and images.fullheart or images.emptyheart, 14*i, 14) --dick
-	--end
 end
 
 function state:mousepressed(x, y, button)
@@ -538,12 +427,6 @@ function state:mousepressed(x, y, button)
 	else
 		player:mousepressed(x, y, button)
 	end
-	--[[
-	if button == "wu" then
-		cam.zoom = cam.zoom + 0.1
-	elseif button == "wd" then
-		cam.zoom = cam.zoom - 0.1
-	end]]
 end
 
 function state:mousereleased(x, y, button)
@@ -572,8 +455,6 @@ function state:keypressed(key, unicode)
 	if keymap[key] then 
 		keymap[key]()
 	end
-	--file:write("\nGame.DT: "..game.dt)
-	--file:flush()
 end
 
 function state:keyreleased(key)

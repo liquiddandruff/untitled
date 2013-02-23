@@ -6,7 +6,7 @@ local currAnim
 
 local bullets
 
-peerPlayer = actor:new() --class
+peerPlayer = actor:new()
 
 function peerPlayer:info(b)
 	bullets = b
@@ -71,7 +71,6 @@ function peerPlayer:Update(dt)
 
 	self.dtfire = self.dtfire + dt
 	
-	--[[]]
 	local maxforce = self.maxforce
 
 	self.acc 		= self.acc + vec(self.xInput*maxforce,self.yInput*maxforce)
@@ -97,7 +96,7 @@ function peerPlayer:Update(dt)
 	
 	local newpos 	= self.pos + self.vel * dt
 	
-	if newpos.x < self.leftbound then								--0.7 micro seconds
+	if newpos.x < self.leftbound then
 		self.vel.x = 0
 		newpos.x = self.leftbound
 	elseif newpos.x > self.rightbound then
@@ -126,9 +125,8 @@ function peerPlayer:Update(dt)
 
 
 	self.moving = (x ~= 0 or y ~= 0)
-	--self.facing = cam:mousepos().x > (self.pos.x) and 1 or -1
 	
-	if self.moving then --or love.mouse.isDown("l") then
+	if self.moving then
 		currAnim 	= walkAnim
 	else
 		currAnim	= idleAnim
@@ -141,9 +139,8 @@ function peerPlayer:draw()
 	local c1,c2,c3 = lg.getColor()
 
 		if self.invuln then lg.setColor(255, 255, 255, 255-(150*self.invuln)) end
-	
-		--currAnim:draw(math.round(self.pos.x),math.round(self.pos.y),self.r,1,1,25,25)	--self.facing
-		currAnim:draw(self.pos.x,self.pos.y,self.r,1,1,25,25)	--self.facing
+
+		currAnim:draw(self.pos.x,self.pos.y,self.r,1,1,25,25)
 		
 		lg.setColor(0,0,0)
 		local round 		= math.round
@@ -175,11 +172,3 @@ function peerPlayer:draw()
 	if release then return end
 	lg.print(self.pos.y,self.pos.x,self.pos.y)
 end
---[[
-function peerPlayer:gethitbox()
-	if self.moving then
-		return { x = self.pos.x-20, y = self.pos.y-20, w = self.radius, h = self.radius, r = self.r, ox = 20, oy = 20 }
-	else
-		return { x = self.pos.x-25, y = self.pos.y-25, w = self.radius, h = self.radius, r = self.r, ox = 25, oy = 25 }
-	end
-end]]

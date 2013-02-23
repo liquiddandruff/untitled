@@ -30,23 +30,7 @@ function state:update(dt)
 end
 
 function state:draw()
-	--screenWc-introfont:getWidth(state.introtext)/2,screenHc-introfont:getHeight()/2
 	lg.print(state.introText.text,screenWc-state.introFontHeight*0.5,state.introText.y)
-	--[[
-	if state.played.impact then
-		lg.draw(images.gaycity, 7, 147)
-		lg.setColor(233, 233, 233, math.max(0, 255+((math.min(0, (state.timer-state.explodeCue)*-0.8)*510)/2)))
-		lg.rectangle("fill", 0, 0, 800, 600)
-		lg.setColor(255, 255, 255, 255)
-	elseif state.played.bombfall then
-		lg.draw(images.bg, 198, 224)
-		lg.draw(images.city, 243, 253)
-		lg.draw(images.bomb, 388, (state.timer-state.bombCue)*170-100)
-	else
-		lg.draw(images.bg, 198, 224)
-		lg.draw(images.city, 243, 253)
-	end
-	--]]
 end
 
 function state:keypressed(key, unicode)

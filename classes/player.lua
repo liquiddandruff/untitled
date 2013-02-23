@@ -13,7 +13,7 @@ local idleAnim
 local walkAnim
 local spinAnim
 local currAnim
---bullets = nil
+
 player = actor:new()
 
 
@@ -68,8 +68,6 @@ function player:init(x, y, a, z, name, cam)		--radius and box moved to actor
 		end
 	end
 
-	--self.headyoffset	= -25*2
-	--self.headxoffset	= -3.182
 	self.lassor 		= 0
 	self.gripping 		= false
 	self.spinning 		= false
@@ -108,18 +106,8 @@ end
 
 
 function player:mousepressed(x, y, button)
-	--bullet:shot(self.x,self.y,self.armfront_angle)
-
 	if button == "l" then
 		self.fired=true
-
-		--[[
-		if self.gripping then
-			self.gripping = false
-			zombies[self.gripped].caught = false
-			self.cb(false)
-		else
-		self.spinning = true]]
     end
 end
 
@@ -212,7 +200,6 @@ function player:hashedUpdate()
 end
 
 function player:Update(dt)
-	--bullet:update(dt)
 	idleAnim:update(dt)
 	walkAnim:update(dt)
 	spinAnim:update(dt)
@@ -223,14 +210,6 @@ function player:Update(dt)
 		self.r		= self.dir:angle2()
 	end
 	
-	--self.armfront_angle		= math.getangle(cam:screen(self.pos).x,love.mouse.getX(),cam:screen(self.pos).y,love.mouse.getY())
-	--self.armback_angle		= math.getangle(cam:screen(self.pos).x,love.mouse.getX(),cam:screen(self.pos).y,love.mouse.getY())
-	--self.head_angle			= math.getangle(cam:screen(self.pos.x+self.headxoffset,self.pos.y+self.headyoffset).x,love.mouse.getX(),cam:screen(self.pos.x+self.headxoffset,self.pos.y+self.headyoffset).y,love.mouse.getY())	
-	--self.armfront_angle 		= math.clamp(self.armfront_angle+math.pi/2,-math.pi/2,math.pi/2)
-	--self.armback_angle		= math.clamp(self.armback_angle,1.56,-1.56)
-
-
-	
 	self.lassor = self.lassor + lassospeed*dt
 	--self.fired = love.mouse.isDown("l")
 	
@@ -240,10 +219,7 @@ function player:Update(dt)
 	if x ~= 0 and y ~= 0 then
 		x,y = x*0.65,y*0.65
 	end
-	--local moving = (x == -self.maxforce or x == self.maxforce  and true or false) or (y == -self.maxforce  or y == self.maxforce  and true or false)
-	--self.x = math.clamp(self.x + x*self.maxspeed*dt,self.area:left()+25,self.area:right()-25)
-	--self.y = math.clamp(self.y + y*self.maxspeed*dt,self.area:top()+25,self.area:bottom()-25)
-	
+
 	if love.keyboard.isDown("o") and zombies[1] then
 		--print("X: "..zombies[1].pos.x)
 		--print("Y: "..zombies[1].pos.y)
@@ -275,35 +251,24 @@ function player:Update(dt)
 	
 	local newpos 	= self.pos + self.vel * dt
 	
-
-	--constrain to area
-	--self.x = math.max(self.x, self.area:left()+25)
-	--self.x = math.min(self.x, self.area:right()-25)
-	--self.y = math.max(self.y, self.area:top()+25)
-	--self.y = math.min(self.y, self.area:bottom()-25)
-	
-	--[[
-	newpos.x = clamp(newpos.x,	self.leftbound,	self.rightbound)	--1.7 micro seconds
-	newpos.y = clamp(newpos.y, self.topbound,	self.botbound)
-	]]
-	if newpos.x < self.leftbound then								--0.7 micro seconds
+	if newpos.x < self.leftbound then
 		self.vel.x = 0
 		newpos.x = self.leftbound
 	elseif newpos.x > self.rightbound then
 		self.vel.x = 0
 		newpos.x = self.rightbound
 	end
-	if newpos.y < self.topbound then			--if newpos.y is higher than top | top to bottom = 0 to 1000
+	--if newpos.y is higher than top | top to bottom = 0 to 1000
+	if newpos.y < self.topbound then			
 		self.vel.y = 0
 		newpos.y = self.topbound
-	elseif newpos.y > self.botbound then	--if newpos.y is lower than top | bottom to top = 1000 to 0
+	--if newpos.y is lower than top | bottom to top = 1000 to 0
+	elseif newpos.y > self.botbound then	
 		self.vel.y = 0 
 		newpos.y = self.botbound
 	end
 	
 	self.pos 	= newpos
-
-
 	
 	self.moving = self.vel:len2() > 0 and true or false
 	
@@ -317,42 +282,6 @@ function player:Update(dt)
 
 	
 	shash:hash(self)
-
---[[
-  if self.throwing then
-    self.lasso.x = self.lasso.x + self.lasso.dirx*lassothrowspeed
-    self.lasso.y = self.lasso.y + self.lasso.diry*lassothrowspeed
-
-    local lassobox = { { x=self.lasso.x-37, y=self.lasso.y-37 },  { x=self.lasso.x+37, y=self.lasso.y-37 }, { x=self.lasso.x+37, y=self.lasso.y+37 }, { x=self.lasso.x-37, y=self.lasso.y+37 } }
-    for i, zombie in ipairs(zombies) do
-      if quadsColliding(lassobox, rotatebox(zombie:getbodybox())) or quadsColliding(lassobox, rotatebox(zombie:getheadbox())) then
-        self.throwing = false
-        soundmanager:play(sounds.yeehaw)
-        self.gripping = true
-        self.gripped = i
-        zombies[i].caught = self
-        self.cb(true)
-      end
-    end
-
-    if (self.x - self.lasso.x)^2 + (self.y - self.lasso.y)^2 > ropelengthSq then
-      self.throwing = false;
-    end
-  end
-
-  if self.gripping then
-    local zombie = zombies[self.gripped]
-    if not zombie then self.gripping = false return end
-    local angle = math.atan2(self.y-zombie.y, self.x-zombie.x)-0.5*math.pi
-    self.r = angle
-    local dist = (self.x - zombie.x)^2 + (self.y - zombie.y)^2
-    if dist > ropelengthSq then
-      local ropeangle = math.atan2(zombie.y-self.y, zombie.x-self.x)
-      zombie.x = self.x + ropelength*math.cos(ropeangle);
-      zombie.y = self.y + ropelength*math.sin(ropeangle);
-    end
-  end
-  ]]
 end
 
 function player:center()
@@ -363,31 +292,9 @@ function player:draw()
 	local c1,c2,c3 = lg.getColor()
 	
 		if self.invuln then lg.setColor(255, 255, 255, 255-(150*self.invuln)) end
-		--print(self.r)
-		--currAnim:draw(math.round(self.pos.x),math.round(self.pos.y),self.r,1,1,25,25)	--self.facing
-		currAnim:draw(self.pos.x,self.pos.y,self.r,1,1,25,25)	--self.facing
+
+		currAnim:draw(self.pos.x,self.pos.y,self.r,1,1,25,25)
 		
-		--[[
-		if self.facing == 1 then		-- facing right			1.5707 or pi/2 = horizontal
-			lg.draw(images.player.armback_s		,math.round(self.x)					,math.round(self.y-20)					,self.armback_angle+math.pi/2		,self.facing,1,5,5	)	--,1, 4,4	)
-			currAnim:draw(						 math.round(self.x)					,math.round(self.y)						,self.r								,self.facing,1,50,50)	--,currAnim.fw/2,currAnim.fw/2	-- second param should be currAnim.fh/2
-			lg.draw(images.player.head			,math.round(self.x-self.headxoffset),math.round(self.y+self.headyoffset/2-1),self.head_angle+math.pi/2			,self.facing,1,11,24)	--images.player.head.width/2,images.player.head.height -- origin at neck
-			lg.draw(images.player.armfront_s	,math.round(self.x)					,math.round(self.y-20)					,self.armfront_angle+math.pi/2+0.03	,self.facing,1,5,5	)	--,4.503,27.483
-
-			lg.setColor(207,16,32)
-			if dbg then lg.line(self.x+5,self.y-25,cam:mousepos().x,cam:mousepos().y) end		
-
-
-		elseif self.facing == -1 then
-			lg.draw(images.player.armback_s		,math.round(self.x)					,math.round(self.y-20)					,self.armback_angle-math.pi/2		,self.facing,1,5,5	)	--,1, 4,4	)
-			currAnim:draw(						 math.round(self.x)					,math.round(self.y)						,self.r								,self.facing,1,50,50)	--,currAnim.fw/2,currAnim.fw/2	-- second param should be currAnim.fh/2
-			lg.draw(images.player.head			,math.round(self.x+self.headxoffset),math.round(self.y+self.headyoffset/2-1),self.head_angle-math.pi/2			,self.facing,1,11,24)	--images.player.head.width/2,images.player.head.height -- origin at neck
-			lg.draw(images.player.armfront_s	,math.round(self.x)					,math.round(self.y-20)					,self.armfront_angle-math.pi/2-0.03	,self.facing,1,5,5	)	--,4.503,27.483
-
-			lg.setColor(207,16,32)
-			if dbg then lg.line(self.x-5,self.y-25,cam:mousepos().x,cam:mousepos().y) end
-
-		end]]
 		lg.setColor(0,0,0)
 		local round = math.round
 		
@@ -417,47 +324,7 @@ function player:draw()
 
 	if release then return end
 	lg.print(self.pos.y,self.pos.x,self.pos.y)
-	
-	--lg.print("armfront_angle: "..self.armfront_angle,self.x,self.y+30)
-	--lg.print("armback_angle: "..self.armback_angle,self.x,self.y+60)
-	
-	--lg.print("temp: "..temp,self.x,self.y+15)
-  --[[
-  if self.spinning then
-	local x, y = math.cos(self.r-0.6)*30, math.sin(self.r-0.6)*30
-	lg.draw(images.lasso, self.x+x, self.y+y, self.lassor, 1, 1, 12, 12)
-  elseif self.gripping then
-	local zombie = zombies[self.gripped]
-	if not zombie then self.gripping = false return end
-	local x, y = math.cos(self.r-0.5*math.pi)*23, math.sin(self.r-0.5*math.pi)*23
-	lg.setColor(104, 89, 67)
-	lg.line(self.x+x, self.y+y, zombie.x, zombie.y)
-	lg.setColor(255, 255, 255)
-  end
-  if self.throwing then
-	local dist = math.sqrt((self.x-self.lasso.x)^2 + (self.y-self.lasso.y)^2)
-	local angle = math.atan2(self.lasso.y-self.y, self.lasso.x-self.x)
-	dist = dist - 37
-	local x, y = math.cos(self.r-0.6)*30, math.sin(self.r-0.6)*30
-	local tx = math.cos(angle)*dist
-	local ty = math.sin(angle)*dist
-	lg.setColor(104, 89, 67)
-	lg.line(self.x+x,self.y+y, self.x+tx, self.y+ty)
-	lg.setColor(255, 255, 255)
-	lg.draw(images.lasso, self.lasso.x, self.lasso.y, 0, 1, 1, 37, 37)
-  end
-  ]]
 end
-
---[[
-function player:gethitbox()
-	if self.moving then
-		return { x = self.pos.x-20, y = self.pos.y-20, w = self.radius, h = self.radius, r = self.r, ox = 20, oy = 20 }
-	else
-		return { x = self.pos.x-25, y = self.pos.y-25, w = self.radius, h = self.radius, r = self.r, ox = 25, oy = 25 }
-	end
-end
-]]
 
 function player:gainexp(exp)
 	self.exp = self.exp + exp

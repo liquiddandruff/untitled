@@ -160,88 +160,7 @@ function netManager:update(dt)
 			peer.xInput,peer.yInput = x,y		
 		end
 	end
-	--[[
-	if peerCount > 0 then
-		for peerNum = 1, peerCount do
-			local x,y,xPos,yPos,rotDeg,fired,health,peerId = 
-	]]
 	
-	--[[
-	local count1,packetList1,count2,packetList2,count3,packetList3 = self.buffer:updateAndPop(dt)
-	if packetList1 then
-
-		
-		for i = 1, count1 do
-			local x1,y1,xPos1,yPos1,rotDeg1,fired1,health1,peerid1 = unpack(packetList1[i])			
-			--local x2,y2,xPos2,yPos2,rotDeg2,fired2,health2,peerid2 = unpack(packetList2[i])
-			
-			if self.peers[peerid1] then
-				local peer = self.peers[peerid1].peer
-				
-				if peerid1 ~= self.client.id and peer then
-					local tonumber	= tonumber
-					peer.health			= tonumber(health1)
-					peer.fired			= tonumber(fired1) --== "1" and true or false	
-					peer.r 				= tonumber(rotDeg1)
-					
-					x1,y1 				= tonumber(x1),tonumber(y1)
-
-					if x1 ~= 0 and y1 ~= 0 then
-						x1,y1 = x1*0.65,y1*0.65
-					end	
-					
-					if xPos1 ~= "0" then
-						xPos1,yPos1 = tonumber(xPos1),tonumber(yPos1)
-						peer.pos.x,peer.pos.y = xPos1,yPos1
-					end
-
-					peer.xInput,peer.yInput = x1,y1	
-					
-					if peerList2[peerid1] then
-						local x2,y2,xPos2,yPos2,rotDeg2,fired2,health2,peerid2 = unpack(peerList2[peerid1])
-						print(1/20)
-						rotDeg2 = tonumber(rotDeg2)
-						tween(0.05,peer,{r = rotDeg2},'linear')
-					end
-				end
-			else
-
-			end
-			
-		end
-	end]]
-	
-	--[[
-	local count,packetList1 = self.buffer:updateAndPop(dt)
-	if packetList1 then
-		for i = 1, count do
-			local x,y,xpos,ypos,rotDeg,fired,health,peerid = packetList1[i]:match("^(%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*)")
-			
-			if self.peers[peerid] then
-				local peer = self.peers[peerid].peer
-				
-				if peerid ~= self.client.id and peer then
-					local tonumber	= tonumber
-					peer.health 		= tonumber(health)
-					peer.fired			= tonumber(fired) --== "1" and true or false	
-					peer.r 				= rotDeg
-					
-					x,y 				= tonumber(x),tonumber(y)
-
-					if x ~= 0 and y ~= 0 then
-						x,y = x*0.65,y*0.65
-					end	
-
-					peer.xInput,peer.yInput = x,y	
-				end
-			else
-				--self:createPeer(peerid)
-				--print(peerid.." has joined")
-			end
-			
-		end
-	end
-	]]
 	for peerid,data in pairs(self.peers) do
 		data.peer:update(dt)
 		
@@ -298,18 +217,7 @@ function netManager:update(dt)
 			--local fired = self.player.fired == true and "1" or "0"
 			local round	= math.round
 			local player 	= self.player
-			--[[
-			local packet	= "ID_1"..round(player.pos.x,3)	..":"..		round(player.pos.y,3)..":"	-- change vel to acc
-									..round(player.vel.x,3)		..":"..		round(player.vel.y,3)..":"	-- rounded to send less data
-									..round(player.rotDeg,4)	..":"..		tostring(self.fired)..":"
-									..round(player.health,3)
-			local packet	= 
-				string.format("%s %s %s %s %s %s %s %s", "ID_1", 
-				round(player.pos.x,1)	,	round(player.pos.y,1),
-				round(player.vel.x,2)	,	round(player.vel.y,2),
-				round(player.rotDeg,3)	,	tostring(self.fired),
-				round(player.health,3))]]
-			--[[]]
+
 			local x 	= (getkey("right") and 1 or 0) - (getkey("left") and 1 or 0)
 			local y 	= (getkey("down") and 1 or 0) - (getkey("up") and 1 or 0)
 			

@@ -27,13 +27,11 @@ require("libs/gamestate")
 require("libs/soundmanager")
 require("libs/utils")
 
-
 --states
 require("states/intro")
 require("states/menu")
 require("states/game")
 require("states/lost")
-
 
 --classes
 require("classes/gui")
@@ -50,8 +48,7 @@ require("classes/minimap")
 function love.run()
     math.randomseed(os.time())
     math.random() math.random()
-	--file = io.open("log.txt","w")
-	--file:write(math.random())
+
     if love.load then love.load(arg) end
 
     local dt = 0
@@ -104,7 +101,7 @@ function love.load()
 	love.mouse.setGrab(false)
 	love.mouse.setVisible(true)
 
-	--Resources
+	-- Resources
 	color =	{	menubackground 	= {240,243,247},
 				introbackground = {0,0,0},
 				hover 			= {0,0,0},
@@ -155,8 +152,9 @@ function love.load()
 			end
 			
 			print(nMngr:numPeers())
-			
-		elseif header == "ID_1" then			-- movement packet
+		
+		-- movement packet
+		elseif header == "ID_1" then
 			
 			nMngr:push(body)
 			
