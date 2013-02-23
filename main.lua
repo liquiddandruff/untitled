@@ -140,15 +140,17 @@ function love.load()
 		local header, body = data:match("^(%S*) (.*)")
 		
 		--print(data)
-
-		if header == "ID_0" then				-- on join/disconnect
+		
+		-- on join/disconnect
+		if header == "ID_0" then				
 			local peerid = body:match("^(%S*)")
 			print(peerid)
-			if nMngr.peers[peerid] then				-- drop client if client exists
+			-- drop client if client exists, create client if client doesn't exist
+			if nMngr.peers[peerid] then				
 				nMngr:dropPeer(peerid)
 				print(peerid.." has disconnected")
 			else
-				nMngr:createPeer(peerid)				-- create client if client doesn't exist
+				nMngr:createPeer(peerid)
 				print(peerid.." has joined")
 			end
 			
@@ -204,21 +206,21 @@ function love.load()
 				
 			--end
 			
-		elseif header == "ID_2" then			-- information packet
+		-- information packet
+		elseif header == "ID_2" then			
 			--local name,peerid = body:match("^(.-):(.+)$")
 			local name, peerid = body:match("^(.-) (%S*)$")
 			
 			print(string.format("Body:%sName:%sPeerID:%s", body, name, peerid))
 
 			if peerid ~= client.id then
-			
-				if nMngr.peers[peerid] then			-- if this client exists
+				-- update client's name if client exists, else create the client
+				if nMngr.peers[peerid] then			
 					local peer = nMngr.peers[peerid].peer
-					
-					peer.name 	= name		-- then modify his name
+					peer.name 	= name		
 				else
 					nMngr:setName(name, peerid)
-					--nMngr:createPeer(peerid)			-- then create client
+					--nMngr:createPeer(peerid)
 					--print(peerid.." has joined LATE")
 				end
 			end
@@ -228,14 +230,14 @@ function love.load()
 	end
 	-- 145 000 K mem
     client 					= lube.udpClient:new()
-    client.handshake 		= "ID_HS"	
+    client.handshake 		= "ID_HS"
 	--client.callbacks.hs		= hs
 	client.callbacks.recv 	= server_data
 
 	game.didhandshake		= false
 	game.connectTime		= love.timer.getTime()
 	client:setPing(true,4,"!")
-    client:connect("174.6.70.212", 7777)
+    client:connect("174.6.80.110", 4141)
 
 	nMngr					= netManager:new(client)
 	
