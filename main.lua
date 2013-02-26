@@ -138,8 +138,13 @@ function love.load()
 		
 		--print(data)
 		
+		-- movement packet
+		if header == "ID_1" then	
+			nMngr:push(body)
+
 		-- on join/disconnect
-		if header == "ID_0" then				
+		elseif header == "ID_0" then
+
 			local peerid = body:match("^(%S*)")
 			print(peerid)
 			-- drop client if client exists, create client if client doesn't exist
@@ -152,58 +157,7 @@ function love.load()
 			end
 			
 			print(nMngr:numPeers())
-		
-		-- movement packet
-		elseif header == "ID_1" then
-			
-			nMngr:push(body)
-			
-			--local x,y,xvel,yvel,rotDeg,fired,health,peerid = body:match("^(.-):(.-):(.-):(.-):(.-):(.-):(.-):(.+)$")		-- everything before : everything before : everything 
-			--%f %f %f %f %f %s %f
-			--this aint working right
-			
-			--[[ THIS BLOCK
-			local x,y,xvel,yvel,rotDeg,fired,health,peerid = body:match("^(%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*) (%S*)|")
-			if peerid ~= client.id then
-				local peer 		= nMngr.peers[peerid].peer
-				local tonumber	= tonumber
-				peer.health 		= tonumber(health)
-				peer.fired			= tonumber(fired) --== "1" and true or false	
-				peer.r 				= rotDeg
-				
-				x,y = tonumber(x),tonumber(y)
-	
-				if x ~= 0 and y ~= 0 then
-					x,y = x*0.65,y*0.65
-				end	
 
-				peer.xInput,peer.yInput = x,y]]
-				
-				--peer.acc 			= peer.acc + vec(x*peer.maxforce*20,y*peer.maxforce*20)
-				
-				--[[
-				--nMngr.peers[peerid].peer.acc = vec(tonumber(xacc),tonumber(yacc))	
-				local newvel		= vec(tonumber(xvel)	,tonumber(yvel))
-				local newpos 		= vec(tonumber(x)		,tonumber(y))
-				local currpos 		= peer.pos
-
-				local offset 		= newpos - (currpos+newvel)
-				local offsetl 		= offset:len()
-				
-				if offsetl > 10 then 
-					peer.pos = newpos 
-					--print(peerid.." position changed aruptly")
-				elseif offsetl > 2 then
-					offset = offset:normalized() * offsetl*0.2
-					--print(offsetl)
-					newvel = newvel + offset
-				end
-				
-				peer.vel = newvel
-				--]]
-				
-			--end
-			
 		-- information packet
 		elseif header == "ID_2" then			
 			--local name,peerid = body:match("^(.-):(.+)$")
@@ -229,12 +183,11 @@ function love.load()
 	-- 145 000 K mem
     client 					= lube.udpClient:new()
     client.handshake 		= "ID_HS"
-	--client.callbacks.hs		= hs
 	client.callbacks.recv 	= server_data
 
 	game.didhandshake		= false
 	game.connectTime		= love.timer.getTime()
-	client:setPing(true,4,"!")
+	client:setPing(true, 4, "!")
     client:connect("174.6.80.110", 4141)
 
 	nMngr					= netManager:new(client)
