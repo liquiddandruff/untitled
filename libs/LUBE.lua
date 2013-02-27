@@ -160,23 +160,22 @@ function client:update(dt)
 		local data, err = self:_receive()
 		
 		-- put in diff callback
-		if not game.didhandshake then	-- if didnt do hand shake
+		if not game.didhandshake then
 			local hs, id
 			--if data then hs,id = data:match("^(.-):(.+)$") end
 			if data then 
 				hs,id = data:match("^(%S*) (%S*)$") 
 			end
 			
-			if hs == self.handshake then --"success" then 
+			if hs == self.handshake then
 				game.didhandshake = true
 				self.id = id
-				print("Connection successfull")
+				print("Connection successful - Assigned ID is: "..self.id)
 			end
 			
 			if love.timer.getTime() - game.connectTime > 2 then
-				print("Failed to connect: server unavailable")
-				
-				self.connected 	=	false
+				self.connected = false
+				print("Connection failed - The server is unavailable at this time.")
 			end
 		end
 		

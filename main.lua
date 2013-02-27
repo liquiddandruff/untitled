@@ -20,7 +20,7 @@ tween 	= require("libs/tween/tween")
 camera	= require("libs/hump/camera")
 vec		= require("libs/hump/vector")
 --timer 	= require("libs/hump/timer")
-require("libs/LUBE")
+--require("libs/LUBE")
 
 --require("libs/debug_unstable") --screws up key detection fixed sorta, and laggs game	--make custom debug
 require("libs/gamestate")
@@ -34,6 +34,7 @@ require("states/game")
 require("states/lost")
 
 --classes
+require("classes/clientUdp")
 require("classes/gui")
 require("classes/clientBuffer")
 require("classes/net manager")
@@ -130,7 +131,7 @@ function love.load()
 	loadfromdir(music			, "resources/music"			, "wav", love.audio.newSource)
 
 	
-	function server_data(data)
+	local function server_data(data)
 		nMngr.rcvCount	= nMngr.rcvCount + 1
 		nMngr.rcvSize	= nMngr.rcvSize + #data
 		
@@ -181,6 +182,7 @@ function love.load()
 		
 	end
 	-- 145 000 K mem
+	--[[
     client 					= lube.udpClient:new()
     client.handshake 		= "ID_HS"
 	client.callbacks.recv 	= server_data
@@ -189,6 +191,12 @@ function love.load()
 	game.connectTime		= love.timer.getTime()
 	client:setPing(true, 4, "!")
     client:connect("174.6.80.110", 4141)
+]]
+	game.didHandshake		= false
+	game.connectTime		= love.timer.getTime()
+
+	client 					= clientUdp:new()
+	client.recvCallback		= server_data
 
 	nMngr					= netManager:new(client)
 	

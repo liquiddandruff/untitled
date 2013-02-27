@@ -113,7 +113,7 @@ function netManager:tweener(peer, toTweento)
 end
 
 function netManager:update(dt)
-	if not game.didhandshake then return false end
+	if not game.didHandshake then return false end
 	
 	--self.rcvTimer = self.rcvTimer + dt
 	--self.rcvRate = self.rcvCount/self.rcvTimer
