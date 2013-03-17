@@ -212,6 +212,7 @@ function netManager:update(dt)
 		if self.player.fired == true then
 			self.fired = self.fired + 1
 		end
+		-- Sending packets at 20Hz
 		if self.tSincePacket.pMov > 0.05 then
 			self.tSincePacket.posUpdate = self.tSincePacket.posUpdate + 1
 			--local fired = self.player.fired == true and "1" or "0"
@@ -259,5 +260,6 @@ function netManager:numPeers()
 	for peerid,_ in pairs(self.peers) do
 		numberOfPeers = numberOfPeers + 1
 	end
-	return numberOfPeers+1					-- include self in count
+	-- Include self in count (should be renamed to numPlayers)
+	return numberOfPeers + 1
 end

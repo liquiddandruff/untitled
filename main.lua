@@ -20,9 +20,6 @@ tween 	= require("libs/tween/tween")
 camera	= require("libs/hump/camera")
 vec		= require("libs/hump/vector")
 --timer 	= require("libs/hump/timer")
---require("libs/LUBE")
-
---require("libs/debug_unstable") --screws up key detection fixed sorta, and laggs game	--make custom debug
 require("libs/gamestate")
 require("libs/soundmanager")
 require("libs/utils")

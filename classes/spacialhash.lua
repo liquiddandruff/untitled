@@ -1,8 +1,7 @@
---create hashclass
 spacialhashclass = class:new()
---localize time-critical function calls
+
 local insert,floor = table.insert,math.floor
---setup parameters
+
 function spacialhashclass:init()
 end
 
@@ -22,7 +21,7 @@ function spacialhashclass:Init(areax,areay,areawidth,areaheight,bucketsize)
 	
 end
 
---clear the hash table each frame
+-- Clear the hash table each frame
 function spacialhashclass:update()
 	--[[
 	--local timer = love.timer
@@ -50,7 +49,7 @@ function spacialhashclass:update()
 	print("B: "..t2-t1)]]
 end
 
---debug, draws each bucket
+-- Debug, draws each bucket
 function spacialhashclass:draw()
 	local lg 		= lg
 	local drawRect = lg.rectangle
@@ -77,18 +76,16 @@ function spacialhashclass:draw()
 	lg.setLineWidth(lw)
 end
 
---get the objects that are in this object's bucket
+-- Get the objects that are in this object's bucket
 function spacialhashclass:getnearby(object)	--bulletsnearby
 	object._hashedID = true
-	local objects,buckets = {}, self:getidforobj(object.box)
+	local objects, buckets = {}, self:getidforobj(object.box)
 
-	--local txtbuckets = ""
 	for _,bucket in ipairs(buckets) do
-		--txtbuckets=txtbuckets..bucket.." "
 		if self.buckets[bucket] then 
 			for _,obj in ipairs(self.buckets[bucket]) do
 				--objects[#objects+1] = obj
-				--prevent returning self
+				-- Prevent returning self
 				if not obj._hashedID then 
 					insert(objects,obj)
 				end	
@@ -97,13 +94,6 @@ function spacialhashclass:getnearby(object)	--bulletsnearby
 	end
 	
 	object._hashedID = false
-	--[[print(object.type.." "..txtbuckets)
-
-	for _,obj in ipairs(objects) do
-		if obj.type ~= "player" then
-			print("Objects near me: "..obj.type)
-		end
-	end]]
 	
 	return objects
 end
@@ -166,13 +156,14 @@ function spacialhashclass:getidforobj(object)
 	return bucketsobjisin
 end
 
-function spacialhashclass:addbucket(vec2,buckettoaddto)
+function spacialhashclass:addbucket(vec2, buckettoaddto)
 	local bucketsize 	= self.bucketsize
 	local cellpos 		= floor(vec2.x/bucketsize) + floor(vec2.y/bucketsize) * self.columns--areawidth/bucketsize
 
 	--[[]]
 	if cellpos >= 0 then
-		if not buckettoaddto[cellpos] then					--don't add cell more than once				
+		-- Don't add cell more than once	
+		if not buckettoaddto[cellpos] then			
 			buckettoaddto[cellpos] = true
 			insert(buckettoaddto,cellpos)
 		end
