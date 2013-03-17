@@ -43,8 +43,8 @@ function player:init(x, y, a, z, name, cam)		--radius and box moved to actor
 	self.pos 			= vec(x,y)	
 	self.rotRad			= vec(0,0)
 	self.rotDeg			= 0	
-	self.maxspeed 		= 360			--300  	350	/dt(100) 	= 35 pixels per 
-	self.maxforce		= 24			--60	/dt(100) 	= 0.6 pixels max acceleration
+	self.maxspeed 		= 340			--300  	350	/dt(100) 	= 35 pixels per 
+	self.maxforce		= 16.5			--60	/dt(100) 	= 0.6 pixels max acceleration
 
 
 	self.fired			= false	
@@ -216,9 +216,6 @@ function player:Update(dt)
 	local move	= self.alive and self.maxforce or 0-- pixels a second * dt correction (100)
 	local x 	= (getkey("right") and move or 0) - (getkey("left") and move or 0)
 	local y 	= (getkey("down") and move or 0) - (getkey("up") and move or 0)
-	if x ~= 0 and y ~= 0 then
-		x,y = x*0.65,y*0.65
-	end
 
 	if love.keyboard.isDown("o") and zombies[1] then
 		--print("X: "..zombies[1].pos.x)
@@ -229,14 +226,15 @@ function player:Update(dt)
 		end
 	end
 	
-	self.acc 		= self.acc + vec(x,y)
+	self.acc 		= self.acc + vec(x,y):truncated(self.maxforce)
 	--self.acc:trunc(self.maxforce)
 	
-	--stop gliding
+	-- Friction
 	local velMag	= self.vel:len()
-
-	if velMag > 0.001 then
-		local acc_after_friction = self.acc - self.heading*11--greater = more friction
+	if velMag ~= 0 then
+		-- Ff = m*g * mu
+		local friction = 1.0*9.8 * 1.0		
+		local acc_after_friction = self.acc - self.heading * friction
 		if velMag - acc_after_friction:len()*dt*60 < 0.001 then
 			self.vel 		= vec(0,0)
 		else

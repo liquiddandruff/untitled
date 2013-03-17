@@ -147,9 +147,6 @@ function netManager:update(dt)
 			
 			x,y					= tonumber(x),tonumber(y)
 
-			if x ~= 0 and y ~= 0 then
-				x,y = x*0.65,y*0.65
-			end	
 			
 			if xPos ~= "0" then
 				local realPos 	= vec(tonumber(xPos),tonumber(yPos))

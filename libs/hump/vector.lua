@@ -63,6 +63,16 @@ function vector:trunc(maxmag)
 	end
 end
 
+function vector:truncated(maxmag)
+	local currmag 	= sqrt(self.x * self.x + self.y * self.y)
+
+
+	if currmag > maxmag then
+		local newvec = self:normalized() * maxmag
+		self.x, self.y = newvec.x, newvec.y
+	end
+	return self
+end
 
 function vector:clone()
 	return new(self.x, self.y)
@@ -150,7 +160,6 @@ end
 function vector:normalized()
 	local l = self:len()
 	if l == 0 then
-		print("normalized: length = 0")
 		return vec(0,0)
 	end
 	return self / l
