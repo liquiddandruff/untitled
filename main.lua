@@ -179,20 +179,11 @@ function love.load()
 		
 	end
 	-- 145 000 K mem
-	--[[
-    client 					= lube.udpClient:new()
-    client.handshake 		= "ID_HS"
-	client.callbacks.recv 	= server_data
-
-	game.didhandshake		= false
-	game.connectTime		= love.timer.getTime()
-	client:setPing(true, 4, "!")
-    client:connect("174.6.80.110", 4141)
-]]
+	
 	game.didHandshake		= false
 	game.connectTime		= love.timer.getTime()
 
-	client 					= clientUdp:new()
+	client 					= clientUdp:new("174.6.80.110", 4141)
 	client.recvCallback		= server_data
 
 	nMngr					= netManager:new(client)

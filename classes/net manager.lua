@@ -151,7 +151,13 @@ function netManager:update(dt)
 			if xPos ~= "0" then
 				local realPos 	= vec(tonumber(xPos),tonumber(yPos))
 				local offset 	= realPos - peer.pos
-				peer.force = peer.force + offset:normalized()*offset:len()
+				--peer.force = peer.force + offset
+				if offset:len() > 200 then
+					peer.pos = realPos
+				else
+					-- Cancel friction calculations, net effect of 0 friction.
+					peer.force = peer.force + offset*dt*9.8*60
+				end
 			end
 
 			peer.xInput,peer.yInput = x,y		

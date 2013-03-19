@@ -2,9 +2,9 @@ local socket = require "socket"
 
 clientUdp = class:new()
 
-function clientUdp:init()
-	self.host 			= "174.6.80.110"
-	self.port 			= 4141	
+function clientUdp:init(host, port)
+	self.host 			= host
+	self.port 			= port
 	self.handshake 		= "ID_HS"
 	self.ping 			= {msg = "!", time = 4, timer = 4}
 
