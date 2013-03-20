@@ -156,7 +156,7 @@ function netManager:update(dt)
 					peer.pos = realPos
 				else
 					-- Cancel friction calculations, net effect of 0 friction.
-					peer.force = peer.force + offset*dt*9.8*60
+					peer.force = peer.force + offset*dt*9.8*55
 				end
 			end
 

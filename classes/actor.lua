@@ -101,7 +101,8 @@ function actor:init()
 	
 	self.vel 			= vec(0,0)	
 	self.acc 			= vec(0,0)	
-	
+	self.weight 		= 55*9.8
+
 	self.behaviour		= {idle = false, separate = true, wandering = true, pursuing = true, fleeing = true}
 	self.wanderTarget 	= vec(0,0)
 	self.force 			= vec(0,0)

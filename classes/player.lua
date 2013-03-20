@@ -43,8 +43,8 @@ function player:init(x, y, a, z, name, cam)		--radius and box moved to actor
 	self.pos 			= vec(x,y)	
 	self.rotRad			= vec(0,0)
 	self.rotDeg			= 0	
-	self.maxspeed 		= 340			--300  	350	/dt(100) 	= 35 pixels per 
-	self.maxforce		= 16.5			--60	/dt(100) 	= 0.6 pixels max acceleration
+	self.maxspeed 		= 330
+	self.maxforce		= 950
 
 
 	self.fired			= false	
@@ -232,17 +232,17 @@ function player:Update(dt)
 	-- Friction
 	local velMag	= self.vel:len()
 	if velMag ~= 0 then
-		-- Ff = m*g * mu
-		local friction = 1.0*9.8 * 1.0		
+		-- Ff = mg * mu
+		local friction = self.weight * 1.0	
 		local acc_after_friction = self.acc - self.heading * friction
-		if velMag - acc_after_friction:len()*dt*60 < 0.001 then
+		if velMag - acc_after_friction:len()*dt < 0.001 then
 			self.vel 		= vec(0,0)
 		else
 			self.acc 		= acc_after_friction 
 		end
 	end
 
-	self.vel 		= self.vel + self.acc * dt * 60 + self.force
+	self.vel 		= self.vel + self.acc * dt + self.force
 	self.vel:trunc(self.maxspeed)
 	self.acc 		= vec(0,0)
 	self.force 		= vec(0,0)
