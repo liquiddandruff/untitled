@@ -6,7 +6,7 @@ function clientUdp:init(host, port)
 	self.host 			= host
 	self.port 			= port
 	self.handshake 		= "ID_HS"
-	self.ping 			= {msg = "!", time = 4, timer = 4}
+	self.ping 			= {msg = "!", currentPing = nil}
 
 	self.connected 		= false
 	self.id 			= nil	
@@ -55,18 +55,17 @@ end
 function clientUdp:update(dt)
 	if not self.connected then return end
 
-	-- Handle ping messages.
-	self.ping.timer = self.ping.timer + dt
-	if self.ping.timer > self.ping.time then
-		self.socket:sendto(self.ping.msg, self.host, self.port)
-		self.ping.timer = 0
-	end
+
 	
 	local data, err = self:receive()
 
 	-- Is the client actually connected? Is there any data to process?
-	if not game.didHandshake and data then
-		local hs, id = data:match("^(%S*) (%S*)$") 
+	if not game.didHandshake then
+		local hs, id
+
+		if data then
+			hs, id = data:match("^(%S*) (%S*)$") 
+		end
 		
 		if hs == self.handshake then
 			game.didHandshake = true
@@ -81,7 +80,13 @@ function clientUdp:update(dt)
 	end
 	
 	while data do
-		self.recvCallback(data)
+		print(string.sub(data, 1, 1), data, string.sub(data, 2))
+		if string.sub(data, 1, 1) == self.ping.msg then
+			self.currentPing = string.sub(data, 2)
+			self:send(self.ping.msg)
+		else
+			self.recvCallback(data)
+		end
 		data, err = self:receive()
 	end
 end
