@@ -5,9 +5,7 @@ local playerName = "Nameless"
 local name 
 
 local dmenu
-local i
 function state:enter()
-	i = 0
 	lg.setBackgroundColor(unpack(color["menubackground"]))
 	self.buttons = {new 			= Button.create("New Game", screenWc		, screenH * 0.4),
 					instructions 	= Button.create("Instructions", screenWc	, screenH * 0.5),
@@ -61,15 +59,7 @@ end
 function state:update(dt)
 	tween.update(dt)
 	client:update(dt)
-	loveframes.update(dt)
-	
-	i = i + dt
-	-- send heartbeat to server:
-	if i > 2.5 then
-		client:send(" ")
-		i = 0
-	end
-		
+	loveframes.update(dt)		
 	
 	for n,b in pairs(self.buttons) do
 		b:update(dt)

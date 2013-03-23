@@ -394,13 +394,13 @@ function state:draw()
 		lgPrint("delta time: "			..game.dt				,rightAlign,0) 
 		lgPrint("fps: "					..love.timer.getFPS()	,rightAlign,20)
 		
-		local str 	= nMngr.rcvRate 	~= 0 and math.round(nMngr.rcvRate,3) or "Not Connected"
+		local str 	= nMngr.client.connected and math.round(nMngr.rcvRate,3) or "Not Connected"
 		lgPrint("packets/second: "		..str,rightAlign,40)
 		
-		str 		= nMngr.rcvSizeRate ~= 0 and tonumber(nMngr.rcvSizeRate) or "Not Connected"
+		str 		= nMngr.client.connected and tonumber(nMngr.rcvSizeRate) or "Not Connected"
 		lgPrint("bytes/second: "		..str,rightAlign,60)
 		
-		str 		= nMngr.client.connected and client.ping.time or "Not Connected"
+		str 		= nMngr.client.connected and client.ping or "Not Connected"
 		lgPrint("ping: "				..str,rightAlign,80)
 	lg.setColor(255,255,255)
 	
