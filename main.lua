@@ -154,7 +154,7 @@ function love.load()
 					print(peerid.." has joined")
 					nMngr:createPeer(peerid)
 				else
-					print("Received ID_0 from self: This means that we have been dropped from the server")
+					print("Received ID_0 from self: We have been dropped from the server")
 				end
 			end
 			

@@ -43,14 +43,14 @@ function clientUdp:send(data)
 	if not self.connected then
 		return false, "Not connected"
 	end
-	 print("clientUdp:send:", data)
+	-- print("clientUdp:send:", data)
 	return self.socket:sendto(data, self.host, self.port)
 end
 
 function clientUdp:receive()
 	local data, ip, port = self.socket:receivefrom()
 	if ip == self.host and port == self.port then
-		print("clientUdp:receive", data)
+		-- print("clientUdp:receive", data)
 		return data
 	end
 	return false, "Unknown remote sent data."
